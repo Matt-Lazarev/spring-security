@@ -29,16 +29,12 @@ public class SecurityConfig {
 
     //@Bean
     public UserDetailsService inMemoryUserDetailsService() {
-        InMemoryUserDetailsManager udm = new InMemoryUserDetailsManager();
-
         UserDetails user = User
                 .withUsername("Mike")
                 .password(passwordEncoder().encode("12345"))
                 .roles("USER")
                 .build();
 
-        udm.createUser(user);
-
-        return udm;
+        return new InMemoryUserDetailsManager(user);
     }
 }
