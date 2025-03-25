@@ -39,7 +39,6 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(10);
     }
 
-    @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(daoUserDetailsService);
@@ -48,7 +47,6 @@ public class SecurityConfig {
         return daoAuthenticationProvider;
     }
 
-    @Bean
     public DaoAuthenticationProvider inMemoryAuthenticationProvider() {
         DaoAuthenticationProvider inMemoryAuthenticationProvider = new DaoAuthenticationProvider();
         inMemoryAuthenticationProvider.setUserDetailsService(inMemoryUserDetailsService());
@@ -57,7 +55,6 @@ public class SecurityConfig {
         return inMemoryAuthenticationProvider;
     }
 
-    @Bean
     public InMemoryUserDetailsManager inMemoryUserDetailsService() {
         UserDetails user = User
                 .withUsername("Kate")
