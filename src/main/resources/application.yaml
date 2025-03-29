@@ -10,3 +10,7 @@ spring:
       hibernate:
         show_sql: true
         dialect: org.hibernate.dialect.MySQLDialect
+
+token:
+  secret: "secretsecretsecretsecretsecretsecretsecretsecretsecret"
+  expiration-ms: "900000" # 15 min

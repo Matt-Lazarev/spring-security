@@ -1,5 +1,7 @@
 package com.lazarev.springsecuritylesson.config;
 
+import com.lazarev.springsecuritylesson.config.filter.CustomAuthenticationFilter;
+import com.lazarev.springsecuritylesson.config.filter.JwtTokenVerifier;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,6 +12,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,17 +26,19 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final DaoUserDetailsService daoUserDetailsService;
+    private final JwtUtil jwtUtil;
 
     @Bean
     public SecurityFilterChain httpSecurity(HttpSecurity http,
                                             AuthenticationManager authManager) throws Exception {
         return http
-                .securityContext(c -> c.requireExplicitSave(false))
                 .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(c -> c.anyRequest().authenticated())
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .addFilter(new CustomAuthenticationFilter(authManager))
+                .addFilter(new CustomAuthenticationFilter(authManager, jwtUtil))
+                .addFilterAfter(new JwtTokenVerifier(jwtUtil), CustomAuthenticationFilter.class)
                 .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .build();
     }
@@ -42,6 +47,13 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(10);
     }
+
+    // 1. BCrypt -> hash:  12345 -> 12345.hash() -> 456235
+    //                              12345.hash() -> 456235
+    //                              54321.hash() -> 456235 (collision)
+    //                              54344.hash() -> 514364
+
+    // 2. HS256 -> encode + key ->  12345.encode(key) -> 456235
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {

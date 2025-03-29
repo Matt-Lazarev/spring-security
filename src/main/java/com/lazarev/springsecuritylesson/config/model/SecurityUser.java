@@ -1,4 +1,4 @@
-package com.lazarev.springsecuritylesson.config;
+package com.lazarev.springsecuritylesson.config.model;
 
 import com.lazarev.springsecuritylesson.entity.ApplicationUser;
 import lombok.RequiredArgsConstructor;

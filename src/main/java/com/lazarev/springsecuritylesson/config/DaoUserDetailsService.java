@@ -1,5 +1,6 @@
 package com.lazarev.springsecuritylesson.config;
 
+import com.lazarev.springsecuritylesson.config.model.SecurityUser;
 import com.lazarev.springsecuritylesson.repository.ApplicationUserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
